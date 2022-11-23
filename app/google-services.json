@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "85386211735",
+    "project_id": "signupfirbase",
+    "storage_bucket": "signupfirbase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85386211735:android:3d1bd695ff6443907414d2",
+        "android_client_info": {
+          "package_name": "com.dndev.signupfirbase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85386211735-9k50ns21pn30v1hl387arq384batefui.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTaqJG8s-ewcgXJNxQJb0U690C7IcEpaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85386211735-9k50ns21pn30v1hl387arq384batefui.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
