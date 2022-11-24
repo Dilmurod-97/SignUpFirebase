@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">SignUpFirbase</string>
+    <string name="app_name">My NewsApp</string>
+    <string name="api_key">1b19fff3985c487291ebac06ce83d856</string>
 </resources>
