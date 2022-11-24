@@ -3,6 +3,7 @@ package com.dndev.signupfirbase;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
     RecyclerView recyclerView;
     CustomAdapter adapter;
     ProgressDialog dialog;
-    Button b1, b2, b3, b4, b5, b6, b7;
+    Button b0, b1, b2, b3, b4, b5, b6, b7;
     SearchView searchView;
 
     @Override
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         dialog.setTitle("Fetching news articles..");
         dialog.show();
 
+        b0 = findViewById(R.id.btn_0);
+        b0.setOnClickListener(this);
         b1 = findViewById(R.id.btn_1);
         b1.setOnClickListener(this);
         b2 = findViewById(R.id.btn_2);
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
 
             if (list.isEmpty()){
                 Toast.makeText(MainActivity.this, "No data found!!!", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
             else {
                 showNews(list);
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
 
     @Override
     public void OnNewsClicked(NewsHeadlines headlines) {
+        headlines.addView();
         startActivity(new Intent(MainActivity.this, DetailsActivity.class)
         .putExtra("data", headlines));
     }

@@ -1,5 +1,7 @@
 package com.dndev.signupfirbase.Models;
 
+import static com.dndev.signupfirbase.MostViewedNews.mostViewedNewsList;
+
 import java.io.Serializable;
 
 public class NewsHeadlines implements Serializable {
@@ -11,6 +13,7 @@ public class NewsHeadlines implements Serializable {
     String urlToImage = "";
     String publishedAt = "";
     String content = "";
+    int viewCount = 0;
 
     public Source getSource() {
         return source;
@@ -76,4 +79,19 @@ public class NewsHeadlines implements Serializable {
         this.content = content;
     }
 
+    public int getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(int viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public void addView() {
+        this.viewCount++;
+
+        if(this.viewCount == 3) {
+            mostViewedNewsList.add(this);
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.dndev.signupfirbase;
 
+import static com.dndev.signupfirbase.MostViewedNews.mostViewedNewsList;
+
 import android.content.Context;
 import android.widget.Toast;
 
@@ -21,31 +23,35 @@ public class RequestManager {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    public void getNewsHeadlines(OnFetchDataListener listener, String category, String query)
+    public void getNewsHeadlines(OnFetchDataListener<NewsApiResponse> listener, String category, String query)
     {
-        CallNewsApi callNewsApi = retrofit.create(CallNewsApi.class);
-        Call<NewsApiResponse> call = callNewsApi.callHeadlines("us", category, query, context.getString(R.string.api_key));
+        if(category.equals("Most Viewed")) {
+            listener.onFetchData(mostViewedNewsList, "");
+        } else {
+            CallNewsApi callNewsApi = retrofit.create(CallNewsApi.class);
+            Call<NewsApiResponse> call = callNewsApi.callHeadlines("us", category, query, context.getString(R.string.api_key));
 
-        try {
-            call.enqueue(new Callback<NewsApiResponse>() {
-                @Override
-                public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
-                    if (!response.isSuccessful()) {
-                        Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show();
+            try {
+                call.enqueue(new Callback<NewsApiResponse>() {
+                    @Override
+                    public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        listener.onFetchData(response.body().getArticles(), response.message());
                     }
 
-                    listener.onFetchData(response.body().getArticles(), response.message());
-                }
+                    @Override
+                    public void onFailure(Call<NewsApiResponse> call, Throwable t) {
+                        listener.onError("Request Failed!");
 
-                @Override
-                public void onFailure(Call<NewsApiResponse> call, Throwable t) {
-                    listener.onError("Request Failed!");
-
-                }
-            });
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+                    }
+                });
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

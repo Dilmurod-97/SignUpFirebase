@@ -40,6 +40,8 @@ public class SignUpActivity extends AppCompatActivity {
         loginRedirectText = findViewById(R.id.loginRedirectText);
         signupEmail = findViewById(R.id.signup_email);
 
+        initMostViewedList();
+
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,5 +76,9 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initMostViewedList() {
+        new MostViewedNews();
     }
 }
