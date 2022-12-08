@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginEmail, loginPassword;
     private TextView signupRedirectText;
     private Button loginButton;
-
+    private CustomPreference customPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +36,11 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
-
+        customPreference = CustomPreference.getInstance(this);
+        if (customPreference.getBoolean("userLoggedIn", false)) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
                                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                        customPreference.putBoolean("userLoggedIn", true);
+                                        customPreference.putString("email", email);
+                                        customPreference.putString("password", pass);
                                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                         finish();
                                     }

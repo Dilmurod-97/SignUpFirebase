@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
     RecyclerView recyclerView;
     CustomAdapter adapter;
     ProgressDialog dialog;
-    Button b0, b1, b2, b3, b4, b5, b6, b7;
+    Button b0, b1, b2, b3, b4, b5, b6, b7, logout;
     SearchView searchView;
     RecommendationAdapter recommendationAdapter;
     RecyclerView recommendationRecycler;
-
+    private CustomPreference customPreference;
     private List<String> recommendationKeyList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         recommendationKeyList = new ArrayList<>();
 
         recommendationKeyList = readDb();
-
+        customPreference = CustomPreference.getInstance(this);
         if (recommendationKeyList.size() > 0) {
 
             RequestManager manager = new RequestManager(MainActivity.this);
@@ -89,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         b6.setOnClickListener(this);
         b7 = findViewById(R.id.btn_7);
         b7.setOnClickListener(this);
+        logout = findViewById(R.id.btn_8);
+        logout.setOnClickListener( event -> {
+            logoutApp();
+        });
 
         RequestManager manager = new RequestManager(this);
         manager.getNewsHeadlines(listener, "general", null);
@@ -184,5 +188,10 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
 
 
         return keyList;
+    }
+
+    private void logoutApp() {
+        customPreference.clear();
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 }

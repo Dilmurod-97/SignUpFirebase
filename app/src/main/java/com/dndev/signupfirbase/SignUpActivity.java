@@ -25,7 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText signupEmail, signupPassword;
     private Button signupButton;
     private TextView loginRedirectText;
-
+    private CustomPreference customPreference;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -39,9 +39,12 @@ public class SignUpActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signup_button);
         loginRedirectText = findViewById(R.id.loginRedirectText);
         signupEmail = findViewById(R.id.signup_email);
-
+        customPreference = CustomPreference.getInstance(this);
         initMostViewedList();
-
+        if (customPreference.getBoolean("userLoggedIn", false)) {
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+            finish();
+        }
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignUpActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                                finish();
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Sign Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -69,12 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        loginRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-            }
-        });
+
 
     }
 
