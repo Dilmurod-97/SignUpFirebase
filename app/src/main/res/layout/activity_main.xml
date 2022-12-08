@@ -127,6 +127,15 @@
     </androidx.cardview.widget.CardView>
 
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recommendationRecyclerView"
+        android:layout_margin="8dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_main"
         android:layout_margin="8dp"

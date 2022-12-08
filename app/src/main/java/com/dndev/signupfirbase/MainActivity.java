@@ -2,6 +2,8 @@ package com.dndev.signupfirbase;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,12 +13,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.dndev.signupfirbase.Models.NewsApiResponse;
 import com.dndev.signupfirbase.Models.NewsHeadlines;
+import com.dndev.signupfirbase.adapters.RecommendationAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SelectListener, View.OnClickListener {
@@ -25,18 +30,33 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
     ProgressDialog dialog;
     Button b0, b1, b2, b3, b4, b5, b6, b7;
     SearchView searchView;
+    RecommendationAdapter recommendationAdapter;
+    RecyclerView recommendationRecycler;
 
+    private List<String> recommendationKeyList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         searchView = findViewById(R.id.search_view);
+        recommendationRecycler = findViewById(R.id.recommendationRecyclerView);
+
+        recommendationKeyList = new ArrayList<>();
+
+        recommendationKeyList = readDb();
+
+        if (recommendationKeyList.size() > 0) {
+
+            RequestManager manager = new RequestManager(MainActivity.this);
+            manager.getRecommendations(listener, "general", recommendationKeyList.get(recommendationKeyList.size()-1));
+        }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 dialog.setTitle("Fetching news articles of " + query);
+                writeDB(query);
                 dialog.show();
                 RequestManager manager = new RequestManager(MainActivity.this);
                 manager.getNewsHeadlines(listener, "general", query);
@@ -89,11 +109,18 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         }
 
         @Override
+        public void onFetchRecommendationsData(List<NewsHeadlines> list, String message) {
+            showRecommendations(list);
+        }
+
+        @Override
         public void onError(String message) {
 
             Toast.makeText(MainActivity.this, "An Error Occured!!!", Toast.LENGTH_LONG).show();
 
         }
+
+
     };
 
     private void showNews(List<NewsHeadlines> list) {
@@ -103,6 +130,17 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         adapter = new CustomAdapter(this, list, this);
         recyclerView.setAdapter(adapter);
 
+    }
+    public void showRecommendations(List<NewsHeadlines> list) {
+        recommendationAdapter = new RecommendationAdapter(this, list, item -> {
+
+            item.addView();
+            startActivity(new Intent(MainActivity.this, DetailsActivity.class)
+                    .putExtra("data", item));
+        });
+        recommendationRecycler.setVisibility(View.VISIBLE);
+        recommendationRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recommendationRecycler.setAdapter(recommendationAdapter);
     }
 
     @Override
@@ -124,4 +162,27 @@ public class MainActivity extends AppCompatActivity implements SelectListener, V
         manager.getNewsHeadlines(listener, category, null);
     }
 
+    public void writeDB(String key) {
+        SQLiteDatabase db = this.openOrCreateDatabase("News", MODE_PRIVATE, null);
+        db.execSQL("CREATE TABLE IF NOT EXISTS news (key_column VARCHAR)");
+        db.execSQL("INSERT INTO news (key_column) VALUES ('"+key+"')");
+    }
+
+    public List<String> readDb() {
+        SQLiteDatabase db = this.openOrCreateDatabase("News", MODE_PRIVATE, null);
+        db.execSQL("CREATE TABLE IF NOT EXISTS news (key_column VARCHAR(100));");
+        Cursor cursor = db.rawQuery("SELECT * FROM news", null);
+        List<String> keyList = new ArrayList<>();
+        if(cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            int key_column_number = cursor.getColumnIndex("key_column");
+
+            do{
+                keyList.add(cursor.getString(key_column_number));
+            } while (cursor.moveToNext());
+        }
+
+
+        return keyList;
+    }
 }
